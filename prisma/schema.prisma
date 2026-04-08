@@ -1,0 +1,339 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  MEMBER
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  CANCELED
+}
+
+enum SystemName {
+  MARKETING
+  SALES
+  PARTNERSHIPS
+  OPERATIONS
+  CUSTOMER_SERVICE
+  FINANCE
+  PEOPLE
+  LEADERSHIP
+}
+
+enum KPIType {
+  LEADING
+  LAGGING
+}
+
+enum ItemStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  BLOCKED
+  COMPLETE
+}
+
+enum PriorityLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum UpdateFrequency {
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
+}
+
+model Account {
+  id           String           @id @default(cuid())
+  name         String
+  slug         String           @unique
+  logoUrl      String?
+  primaryColor String?
+  maxUsers     Int              @default(3)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  users         User[]
+  invites       UserInvite[]
+  systems       BusinessSystem[]
+  activityLogs  ActivityLog[]
+
+  @@index([slug])
+}
+
+model User {
+  id              String               @id @default(cuid())
+  accountId       String
+  email           String               @unique
+  passwordHash    String
+  displayName     String
+  profileImageUrl String?
+  role            UserRole
+  isActive        Boolean              @default(true)
+  lastLoginAt     DateTime?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  account               Account            @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  sentInvites           UserInvite[]       @relation("InvitedByUser")
+  ownedSystems          BusinessSystem[]   @relation("SystemOwner")
+  ownedKpis             KPI[]              @relation("KpiOwner")
+  ownedAnnualGoals      AnnualGoal[]       @relation("AnnualGoalOwner")
+  ownedMilestones       QuarterlyMilestone[] @relation("MilestoneOwner")
+  ownedTasks            Task[]             @relation("TaskOwner")
+  createdTasks          Task[]             @relation("TaskCreatedBy")
+  ownedPriorityItems    PriorityItem[]     @relation("PriorityOwner")
+  activityLogs          ActivityLog[]
+  sessions              Session[]
+  passwordResetTokens   PasswordResetToken[]
+
+  @@index([accountId])
+  @@index([role])
+}
+
+model UserInvite {
+  id              String       @id @default(cuid())
+  accountId       String
+  email           String
+  role            UserRole
+  token           String       @unique
+  status          InviteStatus @default(PENDING)
+  invitedByUserId String?
+  expiresAt       DateTime
+  acceptedAt      DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  account        Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  invitedByUser  User?   @relation("InvitedByUser", fields: [invitedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([accountId])
+  @@index([email])
+  @@unique([accountId, email, status])
+}
+
+model BusinessSystem {
+  id          String     @id @default(cuid())
+  accountId   String
+  name        SystemName
+  ownerUserId String?
+  sortOrder   Int
+  isCompleted Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  account      Account           @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  owner        User?             @relation("SystemOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  content      SystemContent?
+  kpis         KPI[]
+  annualGoals  AnnualGoal[]
+  milestones   QuarterlyMilestone[]
+  tasks        Task[]
+  priorities   PriorityItem[]
+  activityLogs ActivityLog[]
+
+  @@unique([accountId, name])
+  @@index([accountId])
+  @@index([ownerUserId])
+}
+
+model SystemContent {
+  id                         String   @id @default(cuid())
+  systemId                   String   @unique
+  gamePlanObjective          String?
+  gamePlanSuccessDefinition  String?
+  gamePlanFocus              String?
+  gamePlanNotFocus           String?
+  riggingBuildNeeds          String?
+  riggingToolsProcesses      String?
+  riggingOwnershipNotes      String?
+  tractionWeeklyActions      String?
+  tractionPrioritiesSummary  String?
+  tractionNextSteps          String?
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+
+  system BusinessSystem @relation(fields: [systemId], references: [id], onDelete: Cascade)
+}
+
+model KPI {
+  id              String          @id @default(cuid())
+  systemId         String
+  ownerUserId      String?
+  name             String
+  description      String?
+  type             KPIType
+  targetValue      Decimal?
+  currentValue     Decimal?
+  unit             String?
+  updateFrequency  UpdateFrequency?
+  isActive         Boolean         @default(true)
+  sortOrder        Int             @default(0)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  system BusinessSystem @relation(fields: [systemId], references: [id], onDelete: Cascade)
+  owner  User?          @relation("KpiOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+
+  @@index([systemId])
+  @@index([ownerUserId])
+}
+
+model AnnualGoal {
+  id          String        @id @default(cuid())
+  systemId     String
+  ownerUserId  String?
+  title        String
+  description  String?
+  status       ItemStatus    @default(NOT_STARTED)
+  priority     PriorityLevel @default(MEDIUM)
+  dueDate      DateTime?
+  notes        String?
+  sortOrder    Int           @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  system      BusinessSystem      @relation(fields: [systemId], references: [id], onDelete: Cascade)
+  owner       User?               @relation("AnnualGoalOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  milestones  QuarterlyMilestone[]
+  tasks       Task[]
+
+  @@index([systemId])
+  @@index([ownerUserId])
+}
+
+model QuarterlyMilestone {
+  id            String        @id @default(cuid())
+  systemId       String
+  annualGoalId   String?
+  ownerUserId    String?
+  title          String
+  description    String?
+  status         ItemStatus    @default(NOT_STARTED)
+  priority       PriorityLevel @default(MEDIUM)
+  dueDate        DateTime?
+  notes          String?
+  quarterLabel   String?
+  sortOrder      Int           @default(0)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  system      BusinessSystem @relation(fields: [systemId], references: [id], onDelete: Cascade)
+  annualGoal  AnnualGoal?    @relation(fields: [annualGoalId], references: [id], onDelete: SetNull)
+  owner       User?          @relation("MilestoneOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  tasks       Task[]
+
+  @@index([systemId])
+  @@index([annualGoalId])
+  @@index([ownerUserId])
+}
+
+model Task {
+  id                   String        @id @default(cuid())
+  systemId              String
+  annualGoalId          String?
+  quarterlyMilestoneId  String?
+  ownerUserId           String?
+  createdByUserId       String?
+  title                 String
+  description           String?
+  status                ItemStatus    @default(NOT_STARTED)
+  priority              PriorityLevel @default(MEDIUM)
+  dueDate               DateTime?
+  notes                 String?
+  completedAt           DateTime?
+  sortOrder             Int           @default(0)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  system            BusinessSystem      @relation(fields: [systemId], references: [id], onDelete: Cascade)
+  annualGoal        AnnualGoal?         @relation(fields: [annualGoalId], references: [id], onDelete: SetNull)
+  quarterlyMilestone QuarterlyMilestone? @relation(fields: [quarterlyMilestoneId], references: [id], onDelete: SetNull)
+  owner             User?               @relation("TaskOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  createdBy         User?               @relation("TaskCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  @@index([systemId])
+  @@index([annualGoalId])
+  @@index([quarterlyMilestoneId])
+  @@index([ownerUserId])
+}
+
+model PriorityItem {
+  id          String        @id @default(cuid())
+  systemId     String
+  ownerUserId  String?
+  title        String
+  description  String?
+  status       ItemStatus    @default(NOT_STARTED)
+  priority     PriorityLevel @default(HIGH)
+  dueDate      DateTime?
+  notes        String?
+  sortOrder    Int           @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  system BusinessSystem @relation(fields: [systemId], references: [id], onDelete: Cascade)
+  owner  User?          @relation("PriorityOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+
+  @@index([systemId])
+  @@index([ownerUserId])
+}
+
+model ActivityLog {
+  id           String   @id @default(cuid())
+  accountId    String
+  userId       String?
+  systemId     String?
+  entityType   String
+  entityId     String?
+  action       String
+  metadataJson Json?
+  createdAt    DateTime @default(now())
+
+  account Account        @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  user    User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  system  BusinessSystem? @relation(fields: [systemId], references: [id], onDelete: SetNull)
+
+  @@index([accountId, createdAt])
+  @@index([systemId])
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  userId     String
+  tokenHash  String   @unique
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id         String   @id @default(cuid())
+  userId     String
+  token      String   @unique
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}

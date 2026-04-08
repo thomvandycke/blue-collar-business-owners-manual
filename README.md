@@ -1,36 +1,176 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Blue Collar Business Owner's Manual
 
-## Getting Started
+A production-ready MVP SaaS web app for blue-collar business owners to run their company through 8 fixed business systems using the GRIT framework.
 
-First, run the development server:
+## What This MVP Includes
+
+- Multi-tenant account model (1 account per business)
+- Account signup with automatic creation of all 8 systems
+- Session-based email/password authentication (secure hashed passwords)
+- Invite flow with tokenized invite acceptance
+- Admin/member role permissions
+- Account branding (name, color, logo upload)
+- User profile management (display name, profile image, password change)
+- Dashboard with:
+  - system health cards
+  - KPI rollup
+  - top priorities
+  - my tasks
+  - overdue tasks
+  - upcoming milestones
+  - recent activity
+- 8 system pages with:
+  - default View Mode
+  - intentional Edit Mode toggle
+  - GRIT sections (Game Plan, Rigging, Indicators, Traction)
+  - annual goals
+  - quarterly milestones
+  - monthly tasks
+  - priorities
+  - KPI management
+- One-page system summary view for print workflows
+- Tenant isolation and role checks in all mutations
+- Activity logging for important actions
+
+## Tech Stack
+
+- Next.js 16 (App Router)
+- TypeScript
+- Tailwind CSS v4
+- shadcn-style UI primitives
+- Prisma ORM
+- PostgreSQL
+- Zod validation
+- React Hook Form + server actions where useful
+- Vercel-compatible deployment
+
+## Business Rules Enforced
+
+- Exactly one instance of each of the 8 systems per account
+- Max 3 active users per account (base plan)
+- Max 5 active KPIs per system
+- Only admins can edit GRIT content and account/user settings
+- Members can view all systems and update tasks assigned to them
+- User deactivation is soft (`isActive`) to preserve history
+- Activity log entries created on major mutations
+
+## Project Structure
+
+- `prisma/schema.prisma` - full data model and enums
+- `prisma/migrations/0001_init/migration.sql` - initial SQL migration
+- `prisma/seed.ts` - seed script with demo account/users/systems/data
+- `src/actions/*` - server actions for auth/settings/system CRUD
+- `src/app/(public)/*` - public routes (`/login`, `/signup`, invite/reset flows)
+- `src/app/(app)/*` - authenticated app routes
+- `src/components/*` - reusable UI/layout/system/dashboard components
+- `src/lib/*` - auth/session, validation, Prisma, system data helpers
+
+## Environment Variables
+
+Copy `.env.example` to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Required values:
+
+- `DATABASE_URL` - PostgreSQL connection string
+- `NEXT_PUBLIC_APP_URL` - app base URL (`http://localhost:3000` in local dev)
+
+## Local Setup
+
+1. Install dependencies
+
+```bash
+npm install
+```
+
+2. Generate Prisma client
+
+```bash
+npm run db:generate
+```
+
+3. Apply database migrations
+
+```bash
+npm run db:migrate
+```
+
+4. Seed demo data
+
+```bash
+npm run db:seed
+```
+
+5. Start dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Demo Seed Credentials
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+After `npm run db:seed`:
 
-## Learn More
+- Admin: `admin@demo-bluecollar.com` / `Admin123!`
+- Member: `member@demo-bluecollar.com` / `Member123!`
 
-To learn more about Next.js, take a look at the following resources:
+## Core Routes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Public:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `/login`
+- `/signup`
+- `/accept-invite/[token]`
+- `/forgot-password`
+- `/reset-password/[token]`
 
-## Deploy on Vercel
+Authenticated:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `/dashboard`
+- `/systems/[systemName]`
+- `/systems/[systemName]/summary`
+- `/settings/account`
+- `/settings/users`
+- `/settings/profile`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Database Notes
+
+- Uses PostgreSQL enums and relational constraints.
+- Includes optional `Session` and `PasswordResetToken` models for custom auth.
+- Includes `ActivityLog` for mutation history.
+- Planning models include notes/status/priority/ownership/date fields.
+
+## Scripts
+
+- `npm run dev` - start local dev server
+- `npm run lint` - run ESLint
+- `npm run build` - production build
+- `npm run db:generate` - Prisma client generate
+- `npm run db:migrate` - apply/create migrations
+- `npm run db:seed` - seed database
+
+## Vercel Deployment Notes
+
+1. Push this repo to GitHub.
+2. Import project into Vercel.
+3. Add environment variables in Vercel:
+   - `DATABASE_URL`
+   - `NEXT_PUBLIC_APP_URL` (set to your Vercel URL/domain)
+4. Ensure your Postgres instance is reachable from Vercel.
+5. Run migrations against production DB before or during first deploy.
+
+Recommended deployment workflow:
+
+- Run `npm run build` locally before pushing
+- Run migrations in CI/CD or as a controlled release step
+
+## Current Verification Status
+
+- `npm run lint` passes with non-blocking image-element warnings.
+- `npm run build` passes successfully.
+
