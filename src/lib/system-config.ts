@@ -5,7 +5,7 @@ export const SYSTEM_DEFINITIONS = [
   { name: SystemName.SALES, label: "Sales", slug: "sales" },
   { name: SystemName.PARTNERSHIPS, label: "Partnerships", slug: "partnerships" },
   { name: SystemName.OPERATIONS, label: "Operations", slug: "operations" },
-  { name: SystemName.CUSTOMER_SERVICE, label: "Customer Service", slug: "customer-service" },
+  { name: SystemName.CUSTOMER_SERVICE, label: "Customer Success", slug: "customer-service" },
   { name: SystemName.FINANCE, label: "Finance", slug: "finance" },
   { name: SystemName.PEOPLE, label: "People", slug: "people" },
   { name: SystemName.LEADERSHIP, label: "Leadership", slug: "leadership" },
