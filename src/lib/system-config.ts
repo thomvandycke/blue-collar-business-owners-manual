@@ -5,11 +5,15 @@ export const SYSTEM_DEFINITIONS = [
   { name: SystemName.SALES, label: "Sales", slug: "sales" },
   { name: SystemName.PARTNERSHIPS, label: "Partnerships", slug: "partnerships" },
   { name: SystemName.OPERATIONS, label: "Operations", slug: "operations" },
-  { name: SystemName.CUSTOMER_SERVICE, label: "Customer Success", slug: "customer-service" },
+  { name: SystemName.CUSTOMER_SERVICE, label: "Customer Success", slug: "customer-success" },
   { name: SystemName.FINANCE, label: "Finance", slug: "finance" },
   { name: SystemName.PEOPLE, label: "People", slug: "people" },
   { name: SystemName.LEADERSHIP, label: "Leadership", slug: "leadership" },
 ] as const;
+
+const LEGACY_SYSTEM_SLUGS: Record<string, string> = {
+  "customer-service": "customer-success",
+};
 
 export const STATUS_OPTIONS = [
   { value: ItemStatus.NOT_STARTED, label: "Not Started" },
@@ -27,8 +31,13 @@ export const PRIORITY_OPTIONS = [
 
 export type SystemSlug = (typeof SYSTEM_DEFINITIONS)[number]["slug"];
 
+export function getCanonicalSystemSlug(systemSlug: string) {
+  return LEGACY_SYSTEM_SLUGS[systemSlug] ?? systemSlug;
+}
+
 export function getSystemBySlug(systemSlug: string) {
-  return SYSTEM_DEFINITIONS.find((system) => system.slug === systemSlug);
+  const canonical = getCanonicalSystemSlug(systemSlug);
+  return SYSTEM_DEFINITIONS.find((system) => system.slug === canonical);
 }
 
 export function getSystemByName(name: SystemName) {

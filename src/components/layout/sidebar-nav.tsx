@@ -30,7 +30,7 @@ const systemIcons: Record<string, LucideIcon> = {
   sales: HandCoins,
   partnerships: Handshake,
   operations: Wrench,
-  "customer-service": Headset,
+  "customer-success": Headset,
   finance: Wallet,
   people: Users,
   leadership: BriefcaseBusiness,

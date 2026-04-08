@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ItemStatus } from "@prisma/client";
+import { redirect } from "next/navigation";
 
 import { UserAvatarChip } from "@/components/system/user-avatar-chip";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PrintButton } from "@/components/ui/print-button";
 import { requireUser } from "@/lib/auth/session";
+import { getCanonicalSystemSlug } from "@/lib/system-config";
 import { getSystemPageData } from "@/lib/system-data";
 import { formatDate } from "@/lib/utils";
 
@@ -28,8 +30,13 @@ export default async function SystemSummaryPage({
 }) {
   const authContext = await requireUser();
   const { systemName } = await params;
+  const canonicalSystemSlug = getCanonicalSystemSlug(systemName);
 
-  const { definition, system } = await getSystemPageData(authContext.account.id, systemName);
+  if (canonicalSystemSlug !== systemName) {
+    redirect(`/systems/${canonicalSystemSlug}/summary`);
+  }
+
+  const { definition, system } = await getSystemPageData(authContext.account.id, canonicalSystemSlug);
 
   const activeGoals = system.annualGoals.filter((goal) => goal.status !== ItemStatus.COMPLETE);
   const activeMilestones = system.milestones.filter((milestone) => milestone.status !== ItemStatus.COMPLETE);

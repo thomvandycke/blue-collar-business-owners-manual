@@ -1,4 +1,5 @@
 import { UserRole } from "@prisma/client";
+import { redirect } from "next/navigation";
 
 import { updateSystemContentFormAction, updateSystemOwnerFormAction } from "@/actions/system-actions";
 import { AnnualGoalList } from "@/components/system/annual-goal-list";
@@ -14,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { requireUser } from "@/lib/auth/session";
+import { getCanonicalSystemSlug } from "@/lib/system-config";
 import { getSystemPageData } from "@/lib/system-data";
 
 export default async function SystemPage({
@@ -26,8 +28,14 @@ export default async function SystemPage({
   const authContext = await requireUser();
   const { systemName } = await params;
   const query = await searchParams;
+  const canonicalSystemSlug = getCanonicalSystemSlug(systemName);
 
-  const { definition, system, users } = await getSystemPageData(authContext.account.id, systemName);
+  if (canonicalSystemSlug !== systemName) {
+    const queryString = query.mode ? `?mode=${encodeURIComponent(query.mode)}` : "";
+    redirect(`/systems/${canonicalSystemSlug}${queryString}`);
+  }
+
+  const { definition, system, users } = await getSystemPageData(authContext.account.id, canonicalSystemSlug);
 
   const canEdit = authContext.user.role === UserRole.ADMIN;
   const isEditMode = canEdit && query.mode === "edit";
