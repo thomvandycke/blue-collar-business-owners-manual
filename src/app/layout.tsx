@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   title: "Blue Collar Business Owner's Manual",
   description:
     "A calm operating manual for blue-collar business owners to run all 8 business systems with GRIT.",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({
