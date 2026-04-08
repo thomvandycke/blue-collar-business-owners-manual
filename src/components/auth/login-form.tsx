@@ -35,6 +35,25 @@ export function LoginForm() {
           Create account
         </Link>
       </div>
+      <div className="rounded-lg border border-border-subtle bg-surface-2 p-3 text-xs text-text-muted">
+        <p className="font-semibold uppercase tracking-wide text-text-secondary">Privacy + Terms Notice</p>
+        <p className="mt-2">
+          This platform stores business planning data, account information, and login/session records to provide core
+          functionality, security, and support. We do not sell your personal information. Access is role-based and
+          activity may be logged for accountability and audit history.
+        </p>
+        <p className="mt-2">
+          By logging in, you agree to our{" "}
+          <Link href="/terms" className="text-accent-primary hover:underline">
+            Terms &amp; Conditions
+          </Link>{" "}
+          and acknowledge our{" "}
+          <Link href="/privacy" className="text-accent-primary hover:underline">
+            Privacy Statement
+          </Link>
+          .
+        </p>
+      </div>
     </form>
   );
 }

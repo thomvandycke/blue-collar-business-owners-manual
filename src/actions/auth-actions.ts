@@ -9,6 +9,7 @@ import { logActivity } from "@/lib/activity";
 import { getFormString } from "@/lib/form-utils";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { clearCurrentSession, createUserSession, requireUser } from "@/lib/auth/session";
+import { sendNewUserNotification } from "@/lib/notifications";
 import { prisma } from "@/lib/prisma";
 import { SYSTEM_DEFINITIONS } from "@/lib/system-config";
 import {
@@ -118,6 +119,17 @@ export async function signupAction(_: ActionState, formData: FormData): Promise<
   });
 
   await createUserSession(user.id);
+  try {
+    await sendNewUserNotification({
+      accountName: account.name,
+      email,
+      displayName,
+      role: user.role,
+      source: "signup",
+    });
+  } catch (error) {
+    console.error("Failed to send new user signup notification email", error);
+  }
   await logActivity({
     accountId: account.id,
     userId: user.id,
@@ -263,6 +275,18 @@ export async function acceptInviteAction(_: ActionState, formData: FormData): Pr
 
     return createdUser;
   });
+
+  try {
+    await sendNewUserNotification({
+      accountName: invite.account.name,
+      email: invite.email,
+      displayName,
+      role: invite.role,
+      source: "invite_accept",
+    });
+  } catch (error) {
+    console.error("Failed to send new user invite-accept notification email", error);
+  }
 
   await createUserSession(user.id);
   redirect("/dashboard");

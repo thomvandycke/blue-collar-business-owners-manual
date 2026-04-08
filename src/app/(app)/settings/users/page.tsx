@@ -1,11 +1,13 @@
 import { InviteStatus, UserRole } from "@prisma/client";
 
 import { cancelInviteAction, toggleUserActiveAction } from "@/actions/settings-actions";
+import { CreateUserForm } from "@/components/settings/create-user-form";
 import { InviteUserForm } from "@/components/settings/invite-user-form";
 import { UserAvatarChip } from "@/components/system/user-avatar-chip";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { canAccessUserAdminArea } from "@/lib/admin-access";
 import { requireUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
@@ -13,14 +15,16 @@ import { formatDate } from "@/lib/utils";
 export default async function UsersSettingsPage() {
   const authContext = await requireUser();
 
-  if (authContext.user.role !== UserRole.ADMIN) {
+  if (authContext.user.role !== UserRole.ADMIN || !canAccessUserAdminArea(authContext.user.email)) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>User Management</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-text-secondary">Only admins can manage users and invites.</p>
+          <p className="text-sm text-text-secondary">
+            This area is restricted to designated Unmatched Growth super-admins.
+          </p>
         </CardContent>
       </Card>
     );
@@ -81,7 +85,10 @@ export default async function UsersSettingsPage() {
         </CardContent>
       </Card>
 
-      <InviteUserForm />
+      <div className="grid gap-4 lg:grid-cols-2">
+        <CreateUserForm />
+        <InviteUserForm />
+      </div>
 
       <Card>
         <CardHeader>

@@ -25,6 +25,13 @@ export const inviteSchema = z.object({
   role: z.nativeEnum(UserRole),
 });
 
+export const directUserCreateSchema = z.object({
+  displayName: z.string().min(2).max(100),
+  email: z.string().email(),
+  password: passwordSchema,
+  role: z.nativeEnum(UserRole),
+});
+
 export const acceptInviteSchema = z.object({
   token: z.string().min(10),
   displayName: z.string().min(2).max(100),
@@ -117,3 +124,9 @@ export const resetPasswordSchema = z.object({
 });
 
 export const inviteStatusSchema = z.nativeEnum(InviteStatus);
+
+export const supportRequestSchema = z.object({
+  topic: z.string().min(2).max(120),
+  category: z.enum(["help", "bug", "feature"]).default("help"),
+  message: z.string().min(10).max(5000),
+});

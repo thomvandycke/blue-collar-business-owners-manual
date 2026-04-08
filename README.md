@@ -8,9 +8,13 @@ A production-ready MVP SaaS web app for blue-collar business owners to run their
 - Account signup with automatic creation of all 8 systems
 - Session-based email/password authentication (secure hashed passwords)
 - Invite flow with tokenized invite acceptance
+- Direct admin user creation (no invite link required)
 - Admin/member role permissions
+- Restricted admin user-management area (allowlisted super-admin emails)
 - Account branding (name, color, logo upload)
 - User profile management (display name, profile image, password change)
+- In-app Help / Feature Request form (emails internal team)
+- New user registration email notifications
 - Dashboard with:
   - system health cards
   - KPI rollup
@@ -77,6 +81,9 @@ Required values:
 
 - `DATABASE_URL` - PostgreSQL connection string
 - `NEXT_PUBLIC_APP_URL` - app base URL (`http://localhost:3000` in local dev)
+- `RESEND_API_KEY` - API key for transactional outbound email
+- `RESEND_FROM_EMAIL` - sender identity for outbound email
+- `NEW_USER_NOTIFY_EMAIL` - inbox for new-user registration notifications
 
 ## Local Setup
 
@@ -132,6 +139,7 @@ Public:
 Authenticated:
 
 - `/dashboard`
+- `/support`
 - `/systems/[systemName]`
 - `/systems/[systemName]/summary`
 - `/settings/account`
@@ -161,6 +169,9 @@ Authenticated:
 3. Add environment variables in Vercel:
    - `DATABASE_URL`
    - `NEXT_PUBLIC_APP_URL` (set to your Vercel URL/domain)
+   - `RESEND_API_KEY`
+   - `RESEND_FROM_EMAIL`
+   - `NEW_USER_NOTIFY_EMAIL`
 4. Ensure your Postgres instance is reachable from Vercel.
 5. Run migrations against production DB before or during first deploy.
 
@@ -173,4 +184,3 @@ Recommended deployment workflow:
 
 - `npm run lint` passes with non-blocking image-element warnings.
 - `npm run build` passes successfully.
-

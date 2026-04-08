@@ -6,10 +6,22 @@ import { randomBytes } from "node:crypto";
 
 import type { ActionState } from "@/actions/auth-actions";
 import { logActivity } from "@/lib/activity";
+import { canAccessUserAdminArea } from "@/lib/admin-access";
 import { getFormString } from "@/lib/form-utils";
+import { hashPassword } from "@/lib/auth/password";
 import { requireAdmin, requireUser } from "@/lib/auth/session";
+import { sendNewUserNotification } from "@/lib/notifications";
 import { prisma } from "@/lib/prisma";
-import { accountBrandingSchema, inviteSchema, profileSchema } from "@/lib/validation";
+import {
+  accountBrandingSchema,
+  directUserCreateSchema,
+  inviteSchema,
+  profileSchema,
+} from "@/lib/validation";
+
+function hasAdminUsersAccess(email: string) {
+  return canAccessUserAdminArea(email);
+}
 
 export async function updateAccountBrandingAction(
   _: ActionState,
@@ -88,6 +100,9 @@ export async function updateProfileAction(_: ActionState, formData: FormData): P
 
 export async function inviteUserAction(_: ActionState, formData: FormData): Promise<ActionState> {
   const authContext = await requireAdmin();
+  if (!hasAdminUsersAccess(authContext.user.email)) {
+    return { error: "Only the Unmatched Growth super-admin emails can access user admin." };
+  }
 
   const parsed = inviteSchema.safeParse({
     email: getFormString(formData, "email").toLowerCase(),
@@ -177,6 +192,7 @@ export async function inviteUserAction(_: ActionState, formData: FormData): Prom
 
 export async function cancelInviteAction(formData: FormData): Promise<void> {
   const authContext = await requireAdmin();
+  if (!hasAdminUsersAccess(authContext.user.email)) return;
   const inviteId = getFormString(formData, "inviteId");
 
   if (!inviteId) return;
@@ -209,6 +225,7 @@ export async function cancelInviteAction(formData: FormData): Promise<void> {
 
 export async function toggleUserActiveAction(formData: FormData): Promise<void> {
   const authContext = await requireAdmin();
+  if (!hasAdminUsersAccess(authContext.user.email)) return;
 
   const userId = getFormString(formData, "userId");
   const setActive = getFormString(formData, "setActive") === "true";
@@ -241,4 +258,84 @@ export async function toggleUserActiveAction(formData: FormData): Promise<void> 
 
   revalidatePath("/settings/users");
   revalidatePath("/dashboard");
+}
+
+export async function createUserDirectAction(
+  _: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const authContext = await requireAdmin();
+  if (!hasAdminUsersAccess(authContext.user.email)) {
+    return { error: "Only the Unmatched Growth super-admin emails can access user admin." };
+  }
+
+  const parsed = directUserCreateSchema.safeParse({
+    displayName: getFormString(formData, "displayName"),
+    email: getFormString(formData, "email").toLowerCase(),
+    password: getFormString(formData, "password"),
+    role: getFormString(formData, "role") as UserRole,
+  });
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid user details." };
+  }
+
+  const { displayName, email, password, role } = parsed.data;
+
+  const activeUsers = await prisma.user.count({
+    where: {
+      accountId: authContext.account.id,
+      isActive: true,
+    },
+  });
+
+  if (activeUsers >= authContext.account.maxUsers) {
+    return {
+      error: `This account is capped at ${authContext.account.maxUsers} active users on the base plan.`,
+    };
+  }
+
+  const existingUser = await prisma.user.findUnique({ where: { email } });
+  if (existingUser) {
+    return { error: "That email is already in use." };
+  }
+
+  const passwordHash = await hashPassword(password);
+
+  const createdUser = await prisma.user.create({
+    data: {
+      accountId: authContext.account.id,
+      email,
+      passwordHash,
+      displayName,
+      role,
+      isActive: true,
+    },
+  });
+
+  await logActivity({
+    accountId: authContext.account.id,
+    userId: authContext.user.id,
+    entityType: "User",
+    entityId: createdUser.id,
+    action: "user_created_by_admin",
+    metadata: { createdEmail: email, createdRole: role },
+  });
+
+  try {
+    await sendNewUserNotification({
+      accountName: authContext.account.name,
+      email,
+      displayName,
+      role,
+      source: "admin_create",
+    });
+  } catch (error) {
+    console.error("Failed to send new user notification email for admin-created user", error);
+  }
+
+  revalidatePath("/settings/users");
+  revalidatePath("/dashboard");
+
+  return { success: `User created: ${displayName} (${email}).` };
 }

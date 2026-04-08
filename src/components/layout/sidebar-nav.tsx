@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { UserRole } from "@prisma/client";
 import {
   BriefcaseBusiness,
   Cog,
@@ -9,6 +10,7 @@ import {
   Handshake,
   Headset,
   LayoutDashboard,
+  LifeBuoy,
   Megaphone,
   Users,
   Wallet,
@@ -17,6 +19,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
 
+import { canAccessUserAdminArea } from "@/lib/admin-access";
 import { SYSTEM_DEFINITIONS } from "@/lib/system-config";
 import { cn } from "@/lib/utils";
 
@@ -33,8 +36,14 @@ const systemIcons: Record<string, LucideIcon> = {
   leadership: BriefcaseBusiness,
 };
 
-export function SidebarNav() {
+type SidebarNavProps = {
+  userRole: UserRole;
+  userEmail: string;
+};
+
+export function SidebarNav({ userRole, userEmail }: SidebarNavProps) {
   const pathname = usePathname();
+  const canAccessAdminUsers = userRole === UserRole.ADMIN && canAccessUserAdminArea(userEmail);
 
   return (
     <aside className="sticky top-0 h-screen w-[240px] shrink-0 border-r border-border-subtle bg-bg-secondary p-4">
@@ -116,6 +125,32 @@ export function SidebarNav() {
           <Cog className="h-4 w-4" />
           Settings
         </Link>
+        <Link
+          href="/support"
+          className={cn(
+            "mt-1 flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150",
+            pathname.startsWith("/support")
+              ? "bg-accent-soft text-accent-primary"
+              : "text-text-secondary hover:bg-surface-2 hover:text-text-primary",
+          )}
+        >
+          <LifeBuoy className="h-4 w-4" />
+          Help
+        </Link>
+        {canAccessAdminUsers ? (
+          <Link
+            href="/settings/users"
+            className={cn(
+              "mt-1 flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150",
+              pathname.startsWith("/settings/users")
+                ? "bg-accent-soft text-accent-primary"
+                : "text-text-secondary hover:bg-surface-2 hover:text-text-primary",
+            )}
+          >
+            <Users className="h-4 w-4" />
+            Admin Users
+          </Link>
+        ) : null}
       </div>
     </aside>
   );

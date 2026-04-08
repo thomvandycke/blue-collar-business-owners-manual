@@ -7,7 +7,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-screen bg-bg-primary">
-      <SidebarNav />
+      <SidebarNav userRole={authContext.user.role} userEmail={authContext.user.email} />
       <div className="flex min-h-screen flex-1 flex-col">
         <TopHeader
           accountName={authContext.account.name}
@@ -18,6 +18,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <main className="flex-1 p-6 lg:p-8">
           <div className="mx-auto w-full max-w-[1320px]">{children}</div>
         </main>
+        <footer className="border-t border-border-subtle px-6 py-3 text-xs text-text-muted lg:px-8">
+          © 2026 Unmatched Growth
+        </footer>
       </div>
     </div>
   );

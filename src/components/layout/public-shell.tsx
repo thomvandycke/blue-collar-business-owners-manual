@@ -28,6 +28,7 @@ export function PublicShell({ title, description, children }: PublicShellProps) 
           </CardHeader>
           <CardContent>{children}</CardContent>
         </Card>
+        <p className="text-center text-xs text-text-muted">© 2026 Unmatched Growth</p>
       </div>
     </div>
   );
