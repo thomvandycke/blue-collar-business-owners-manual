@@ -14,7 +14,7 @@ export default async function ProfileSettingsPage() {
     <Card>
       <CardHeader>
         <CardTitle>Profile</CardTitle>
-        <p className="text-sm text-slate-500">Manage your display name, profile image, and password.</p>
+        <p className="text-sm text-text-muted">Manage your display name, profile image, and password.</p>
       </CardHeader>
       <CardContent>
         <ProfileSettingsForm

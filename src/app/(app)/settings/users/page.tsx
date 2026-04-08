@@ -20,7 +20,7 @@ export default async function UsersSettingsPage() {
           <CardTitle>User Management</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-slate-600">Only admins can manage users and invites.</p>
+          <p className="text-sm text-text-secondary">Only admins can manage users and invites.</p>
         </CardContent>
       </Card>
     );
@@ -46,17 +46,17 @@ export default async function UsersSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Team Seats</CardTitle>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-text-muted">
             Base plan supports up to {authContext.account.maxUsers} active users.
           </p>
         </CardHeader>
         <CardContent className="space-y-3">
           {users.map((user) => (
-            <div key={user.id} className="rounded-lg border border-slate-200 p-3">
+            <div key={user.id} className="rounded-lg border border-border-subtle p-3">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="space-y-1">
                   <UserAvatarChip name={user.displayName} imageUrl={user.profileImageUrl} />
-                  <p className="text-sm text-slate-600">{user.email}</p>
+                  <p className="text-sm text-text-secondary">{user.email}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge tone={user.role === UserRole.ADMIN ? "default" : "muted"}>
@@ -89,14 +89,14 @@ export default async function UsersSettingsPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           {invites.length === 0 ? (
-            <p className="text-sm text-slate-500">No invites yet.</p>
+            <p className="text-sm text-text-muted">No invites yet.</p>
           ) : (
             invites.map((invite) => (
-              <div key={invite.id} className="rounded-lg border border-slate-200 p-3">
+              <div key={invite.id} className="rounded-lg border border-border-subtle p-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
-                    <p className="font-medium text-slate-900">{invite.email}</p>
-                    <p className="text-sm text-slate-500">
+                    <p className="font-medium text-text-primary">{invite.email}</p>
+                    <p className="text-sm text-text-muted">
                       {invite.role.toLowerCase()} • created {formatDate(invite.createdAt)}
                     </p>
                   </div>
@@ -109,7 +109,7 @@ export default async function UsersSettingsPage() {
                 {invite.status === InviteStatus.PENDING ? (
                   <form action={cancelInviteAction} className="mt-2">
                     <input type="hidden" name="inviteId" value={invite.id} />
-                    <Button type="submit" size="sm" variant="ghost" className="text-rose-700 hover:bg-rose-50">
+                    <Button type="submit" size="sm" variant="ghost" className="text-danger hover:bg-[rgba(235,87,87,0.2)]">
                       Cancel Invite
                     </Button>
                   </form>

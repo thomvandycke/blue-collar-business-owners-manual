@@ -33,7 +33,7 @@ export function AccountSettingsForm({
 
       <div className="space-y-2">
         <Label htmlFor="primaryColor">Primary Color</Label>
-        <Input id="primaryColor" name="primaryColor" defaultValue={defaultPrimaryColor ?? ""} placeholder="#1f4f46" />
+        <Input id="primaryColor" name="primaryColor" defaultValue={defaultPrimaryColor ?? ""} placeholder="#ff6a00" />
       </div>
 
       <ImageUploadInput
@@ -43,8 +43,8 @@ export function AccountSettingsForm({
         defaultValue={defaultLogoUrl}
       />
 
-      {state.error ? <p className="text-sm text-rose-700">{state.error}</p> : null}
-      {state.success ? <p className="text-sm text-emerald-700">{state.success}</p> : null}
+      {state.error ? <p className="text-sm text-danger">{state.error}</p> : null}
+      {state.success ? <p className="text-sm text-success">{state.success}</p> : null}
 
       <SubmitButton type="submit">Save Branding</SubmitButton>
     </form>

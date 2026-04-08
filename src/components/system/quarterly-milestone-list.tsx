@@ -55,12 +55,12 @@ export function QuarterlyMilestoneList({
       </CardHeader>
       <CardContent className="space-y-4">
         {milestones.length === 0 ? (
-          <p className="rounded-md border border-dashed border-slate-300 p-3 text-sm text-slate-500">
+          <p className="rounded-md border border-dashed border-border-subtle p-3 text-sm text-text-muted">
             No milestones yet.
           </p>
         ) : (
           milestones.map((milestone) => (
-            <div key={milestone.id} className="rounded-lg border border-slate-200 p-4">
+            <div key={milestone.id} className="rounded-lg border border-border-subtle p-4">
               {isEditMode && canEdit ? (
                 <form action={updateMilestoneFormAction} className="space-y-3">
                   <input type="hidden" name="id" defaultValue={milestone.id} />
@@ -140,14 +140,14 @@ export function QuarterlyMilestoneList({
               ) : (
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h4 className="font-medium text-slate-900">{milestone.title}</h4>
+                    <h4 className="font-medium text-text-primary">{milestone.title}</h4>
                     <div className="flex gap-2">
                       <ItemStatusBadge status={milestone.status} />
                       <PriorityBadge priority={milestone.priority} />
                     </div>
                   </div>
-                  <p className="text-sm text-slate-600">{milestone.description || "No description"}</p>
-                  <div className="grid gap-2 text-sm text-slate-600 md:grid-cols-2">
+                  <p className="text-sm text-text-secondary">{milestone.description || "No description"}</p>
+                  <div className="grid gap-2 text-sm text-text-secondary md:grid-cols-2">
                     <span>Due: {formatDate(milestone.dueDate)}</span>
                     <span>Quarter: {milestone.quarterLabel || "-"}</span>
                     <span>Linked goal: {milestone.annualGoal?.title || "-"}</span>
@@ -160,7 +160,7 @@ export function QuarterlyMilestoneList({
                 <form action={deleteMilestoneAction} className="mt-3">
                   <input type="hidden" name="id" defaultValue={milestone.id} />
                   <input type="hidden" name="systemId" defaultValue={systemId} />
-                  <Button type="submit" size="sm" variant="ghost" className="text-rose-700 hover:bg-rose-50">
+                  <Button type="submit" size="sm" variant="ghost" className="text-danger hover:bg-[rgba(235,87,87,0.2)]">
                     Delete Milestone
                   </Button>
                 </form>
@@ -170,8 +170,8 @@ export function QuarterlyMilestoneList({
         )}
 
         {isEditMode && canEdit ? (
-          <div className="rounded-lg border border-dashed border-slate-300 p-4">
-            <h4 className="mb-3 text-sm font-semibold text-slate-800">Add Quarterly Milestone</h4>
+          <div className="rounded-lg border border-dashed border-border-subtle p-4">
+            <h4 className="mb-3 text-sm font-semibold text-text-primary">Add Quarterly Milestone</h4>
             <form action={createMilestoneFormAction} className="grid gap-3 md:grid-cols-2">
               <input type="hidden" name="systemId" defaultValue={systemId} />
               <div className="space-y-1 md:col-span-2">

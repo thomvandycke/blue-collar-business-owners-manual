@@ -11,7 +11,7 @@ export function WidgetCard({ title, subtitle, children }: WidgetCardProps) {
     <Card>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        {subtitle ? <p className="text-sm text-slate-500">{subtitle}</p> : null}
+        {subtitle ? <p className="text-sm text-text-muted">{subtitle}</p> : null}
       </CardHeader>
       <CardContent>{children}</CardContent>
     </Card>

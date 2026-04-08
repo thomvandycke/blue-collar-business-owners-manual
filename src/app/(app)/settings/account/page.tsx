@@ -15,7 +15,7 @@ export default async function AccountSettingsPage() {
           <CardTitle>Account Settings</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-slate-600">Only admins can edit account branding and settings.</p>
+          <p className="text-sm text-text-secondary">Only admins can edit account branding and settings.</p>
         </CardContent>
       </Card>
     );
@@ -29,7 +29,7 @@ export default async function AccountSettingsPage() {
     <Card>
       <CardHeader>
         <CardTitle>Account Settings</CardTitle>
-        <p className="text-sm text-slate-500">Update branding used across dashboard and one-page summaries.</p>
+        <p className="text-sm text-text-muted">Update branding used across dashboard and one-page summaries.</p>
       </CardHeader>
       <CardContent>
         <AccountSettingsForm

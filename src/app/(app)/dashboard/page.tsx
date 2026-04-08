@@ -150,31 +150,31 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-slate-600">
+      <div className="rounded-xl border border-border-subtle bg-surface-1 p-5 shadow-sm">
+        <h1 className="text-2xl font-semibold text-text-primary">Dashboard</h1>
+        <p className="mt-1 text-sm text-text-secondary">
           Keep execution simple: update your weekly traction, priorities, and numbers in one place.
         </p>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
-          <div className="rounded-lg bg-slate-50 p-3">
-            <p className="text-xs uppercase tracking-wide text-slate-500">Overall Completion</p>
-            <p className="text-xl font-semibold text-slate-900">{completionPercentage}%</p>
+          <div className="rounded-lg bg-surface-2 p-3">
+            <p className="text-xs uppercase tracking-wide text-text-muted">Overall Completion</p>
+            <p className="text-xl font-semibold text-text-primary">{completionPercentage}%</p>
           </div>
-          <div className="rounded-lg bg-slate-50 p-3">
-            <p className="text-xs uppercase tracking-wide text-slate-500">KPI Rollup</p>
-            <p className="text-xl font-semibold text-slate-900">
+          <div className="rounded-lg bg-surface-2 p-3">
+            <p className="text-xs uppercase tracking-wide text-text-muted">KPI Rollup</p>
+            <p className="text-xl font-semibold text-text-primary">
               {allKpis.length === 0 ? "No KPIs" : `${onTargetKpis}/${allKpis.length} on target`}
             </p>
           </div>
-          <div className="rounded-lg bg-slate-50 p-3">
-            <p className="text-xs uppercase tracking-wide text-slate-500">Overdue Tasks</p>
-            <p className="text-xl font-semibold text-rose-700">{overdueTasks.length}</p>
+          <div className="rounded-lg bg-surface-2 p-3">
+            <p className="text-xs uppercase tracking-wide text-text-muted">Overdue Tasks</p>
+            <p className="text-xl font-semibold text-danger">{overdueTasks.length}</p>
           </div>
         </div>
       </div>
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold text-slate-900">System Health</h2>
+        <h2 className="mb-3 text-lg font-semibold text-text-primary">System Health</h2>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {systems.map((system) => {
             const openTasks = system.tasks.filter((task) => task.status !== ItemStatus.COMPLETE).length;
@@ -204,16 +204,16 @@ export default async function DashboardPage() {
         <WidgetCard title="My Tasks" subtitle="Assigned to you">
           <div className="space-y-2 text-sm">
             {myTasks.length === 0 ? (
-              <p className="text-slate-500">No active tasks assigned to you.</p>
+              <p className="text-text-muted">No active tasks assigned to you.</p>
             ) : (
               myTasks.map((task) => {
                 const system = getSystemByName(task.system.name);
                 return (
-                  <div key={task.id} className="rounded-md border border-slate-200 p-3">
+                  <div key={task.id} className="rounded-md border border-border-subtle p-3">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <p className="font-medium text-slate-900">{task.title}</p>
-                        <p className="text-slate-500">{system?.label}</p>
+                        <p className="font-medium text-text-primary">{task.title}</p>
+                        <p className="text-text-muted">{system?.label}</p>
                       </div>
                       <Badge tone={task.dueDate && task.dueDate < new Date() ? "danger" : "muted"}>
                         {formatDate(task.dueDate)}
@@ -229,14 +229,14 @@ export default async function DashboardPage() {
         <WidgetCard title="Top Priorities" subtitle="Across all systems">
           <div className="space-y-2 text-sm">
             {topPriorities.length === 0 ? (
-              <p className="text-slate-500">No open priorities.</p>
+              <p className="text-text-muted">No open priorities.</p>
             ) : (
               topPriorities.map((item) => (
-                <div key={item.id} className="rounded-md border border-slate-200 p-3">
+                <div key={item.id} className="rounded-md border border-border-subtle p-3">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="font-medium text-slate-900">{item.title}</p>
-                      <p className="text-slate-500">
+                      <p className="font-medium text-text-primary">{item.title}</p>
+                      <p className="text-text-muted">
                         {getSystemByName(item.system.name)?.label} • {item.owner?.displayName || "Unassigned"}
                       </p>
                     </div>
@@ -253,12 +253,12 @@ export default async function DashboardPage() {
         <WidgetCard title="Upcoming Quarterly Milestones">
           <div className="space-y-2 text-sm">
             {upcomingMilestones.length === 0 ? (
-              <p className="text-slate-500">No upcoming milestones.</p>
+              <p className="text-text-muted">No upcoming milestones.</p>
             ) : (
               upcomingMilestones.map((milestone) => (
-                <div key={milestone.id} className="rounded-md border border-slate-200 p-3">
-                  <p className="font-medium text-slate-900">{milestone.title}</p>
-                  <p className="text-slate-500">
+                <div key={milestone.id} className="rounded-md border border-border-subtle p-3">
+                  <p className="font-medium text-text-primary">{milestone.title}</p>
+                  <p className="text-text-muted">
                     {getSystemByName(milestone.system.name)?.label} • Due {formatDate(milestone.dueDate)}
                   </p>
                 </div>
@@ -270,14 +270,14 @@ export default async function DashboardPage() {
         <WidgetCard title="Recent Activity">
           <div className="space-y-2 text-sm">
             {recentActivity.length === 0 ? (
-              <p className="text-slate-500">No activity yet.</p>
+              <p className="text-text-muted">No activity yet.</p>
             ) : (
               recentActivity.map((entry) => (
-                <div key={entry.id} className="rounded-md border border-slate-200 p-3">
-                  <p className="font-medium text-slate-900">
+                <div key={entry.id} className="rounded-md border border-border-subtle p-3">
+                  <p className="font-medium text-text-primary">
                     {entry.user?.displayName || "System"} • {entry.action.replaceAll("_", " ")}
                   </p>
-                  <p className="text-slate-500">
+                  <p className="text-text-muted">
                     {entry.system ? `${getSystemByName(entry.system.name)?.label} • ` : ""}
                     {formatDate(entry.createdAt)}
                   </p>
@@ -288,9 +288,9 @@ export default async function DashboardPage() {
         </WidgetCard>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
+      <div className="rounded-xl border border-border-subtle bg-surface-1 p-4 text-sm text-text-secondary">
         Need a one-page system snapshot? Open any system and click <strong>Summary</strong>.
-        <Link href="/systems/marketing" className="ml-2 text-[#1f4f46] hover:underline">
+        <Link href="/systems/marketing" className="ml-2 text-accent-primary hover:underline">
           Start with Marketing
         </Link>
       </div>

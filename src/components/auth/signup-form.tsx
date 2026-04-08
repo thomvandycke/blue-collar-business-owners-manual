@@ -30,15 +30,15 @@ export function SignupForm() {
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
         <Input id="password" name="password" type="password" required />
-        <p className="text-xs text-slate-500">Use at least 8 characters with uppercase, lowercase, and a number.</p>
+        <p className="text-xs text-text-muted">Use at least 8 characters with uppercase, lowercase, and a number.</p>
       </div>
-      {state.error ? <p className="text-sm text-rose-700">{state.error}</p> : null}
+      {state.error ? <p className="text-sm text-danger">{state.error}</p> : null}
       <SubmitButton type="submit" className="w-full">
         Create Account
       </SubmitButton>
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-text-secondary">
         Already have an account?{" "}
-        <Link href="/login" className="text-[#1f4f46] hover:underline">
+        <Link href="/login" className="text-accent-primary hover:underline">
           Log in
         </Link>
       </p>

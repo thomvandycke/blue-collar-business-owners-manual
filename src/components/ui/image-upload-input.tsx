@@ -18,8 +18,8 @@ export function ImageUploadInput({ name, defaultValue, label, hint }: ImageUploa
 
   return (
     <div className="space-y-2">
-      <p className="text-sm font-medium text-slate-700">{label}</p>
-      {hint ? <p className="text-xs text-slate-500">{hint}</p> : null}
+      <p className="text-sm font-medium text-text-secondary">{label}</p>
+      {hint ? <p className="text-xs text-text-muted">{hint}</p> : null}
       <input type="hidden" name={name} value={value} readOnly />
       <Input
         type="file"
@@ -53,7 +53,7 @@ export function ImageUploadInput({ name, defaultValue, label, hint }: ImageUploa
           </Button>
         </div>
       ) : null}
-      {error ? <p className="text-sm text-rose-700">{error}</p> : null}
+      {error ? <p className="text-sm text-danger">{error}</p> : null}
     </div>
   );
 }

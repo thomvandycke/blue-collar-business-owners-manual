@@ -23,15 +23,15 @@ export function LoginForm() {
         <Label htmlFor="password">Password</Label>
         <Input id="password" name="password" type="password" required />
       </div>
-      {state.error ? <p className="text-sm text-rose-700">{state.error}</p> : null}
+      {state.error ? <p className="text-sm text-danger">{state.error}</p> : null}
       <SubmitButton type="submit" className="w-full">
         Log In
       </SubmitButton>
       <div className="flex items-center justify-between text-sm">
-        <Link href="/forgot-password" className="text-[#1f4f46] hover:underline">
+        <Link href="/forgot-password" className="text-accent-primary hover:underline">
           Forgot password?
         </Link>
-        <Link href="/signup" className="text-[#1f4f46] hover:underline">
+        <Link href="/signup" className="text-accent-primary hover:underline">
           Create account
         </Link>
       </div>

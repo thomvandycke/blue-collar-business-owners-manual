@@ -14,7 +14,7 @@ type TopHeaderProps = {
 
 export function TopHeader({ accountName, accountLogoUrl, userName, userImage }: TopHeaderProps) {
   return (
-    <header className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white/95 px-6 py-3 backdrop-blur">
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border-subtle bg-bg-primary/95 px-6 backdrop-blur">
       <div className="flex items-center gap-3">
         {accountLogoUrl ? (
           <Image
@@ -26,13 +26,17 @@ export function TopHeader({ accountName, accountLogoUrl, userName, userImage }: 
             className="h-10 w-10 rounded-md object-cover"
           />
         ) : (
-          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-[#1f4f46] text-sm font-bold text-white">
-            {accountName.slice(0, 1).toUpperCase()}
-          </div>
+          <Image
+            src="/brand/logo-mark-orange-trans-bg.png"
+            alt="Unmatched Growth mark"
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded-md object-cover"
+          />
         )}
         <div>
-          <p className="text-sm text-slate-500">Account</p>
-          <p className="font-semibold text-slate-900">{accountName}</p>
+          <p className="text-xs uppercase tracking-wide text-text-muted">Account</p>
+          <p className="font-semibold text-text-primary">{accountName}</p>
         </div>
       </div>
       <div className="flex items-center gap-3">

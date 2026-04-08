@@ -57,14 +57,14 @@ export function TaskList({
       </CardHeader>
       <CardContent className="space-y-4">
         {tasks.length === 0 ? (
-          <p className="rounded-md border border-dashed border-slate-300 p-3 text-sm text-slate-500">
+          <p className="rounded-md border border-dashed border-border-subtle p-3 text-sm text-text-muted">
             No tasks yet.
           </p>
         ) : (
           tasks.map((task) => {
             const canMemberUpdate = !canAdminEdit && task.ownerUserId === currentUserId;
             return (
-              <div key={task.id} className="rounded-lg border border-slate-200 p-4">
+              <div key={task.id} className="rounded-lg border border-border-subtle p-4">
                 {isEditMode && canAdminEdit ? (
                   <form action={updateTaskFormAction} className="space-y-3">
                     <input type="hidden" name="id" defaultValue={task.id} />
@@ -153,13 +153,13 @@ export function TaskList({
                     <input type="hidden" name="id" defaultValue={task.id} />
                     <input type="hidden" name="systemId" defaultValue={systemId} />
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h4 className="font-medium text-slate-900">{task.title}</h4>
+                      <h4 className="font-medium text-text-primary">{task.title}</h4>
                       <div className="flex gap-2">
                         <ItemStatusBadge status={task.status} />
                         <PriorityBadge priority={task.priority} />
                       </div>
                     </div>
-                    <p className="text-sm text-slate-600">{task.description || "No description"}</p>
+                    <p className="text-sm text-text-secondary">{task.description || "No description"}</p>
                     <div className="grid gap-2 md:grid-cols-2">
                       <div className="space-y-1">
                         <Label>Status</Label>
@@ -183,14 +183,14 @@ export function TaskList({
                 ) : (
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h4 className="font-medium text-slate-900">{task.title}</h4>
+                      <h4 className="font-medium text-text-primary">{task.title}</h4>
                       <div className="flex gap-2">
                         <ItemStatusBadge status={task.status} />
                         <PriorityBadge priority={task.priority} />
                       </div>
                     </div>
-                    <p className="text-sm text-slate-600">{task.description || "No description"}</p>
-                    <div className="grid gap-2 text-sm text-slate-600 md:grid-cols-2">
+                    <p className="text-sm text-text-secondary">{task.description || "No description"}</p>
+                    <div className="grid gap-2 text-sm text-text-secondary md:grid-cols-2">
                       <span>Due: {formatDate(task.dueDate)}</span>
                       <span>Notes: {task.notes || "-"}</span>
                       <span>Annual goal: {task.annualGoal?.title || "-"}</span>
@@ -203,7 +203,7 @@ export function TaskList({
                   <form action={deleteTaskAction} className="mt-3">
                     <input type="hidden" name="id" defaultValue={task.id} />
                     <input type="hidden" name="systemId" defaultValue={systemId} />
-                    <Button type="submit" size="sm" variant="ghost" className="text-rose-700 hover:bg-rose-50">
+                    <Button type="submit" size="sm" variant="ghost" className="text-danger hover:bg-[rgba(235,87,87,0.2)]">
                       Delete Task
                     </Button>
                   </form>
@@ -214,8 +214,8 @@ export function TaskList({
         )}
 
         {isEditMode && canAdminEdit ? (
-          <div className="rounded-lg border border-dashed border-slate-300 p-4">
-            <h4 className="mb-3 text-sm font-semibold text-slate-800">Add Task</h4>
+          <div className="rounded-lg border border-dashed border-border-subtle p-4">
+            <h4 className="mb-3 text-sm font-semibold text-text-primary">Add Task</h4>
             <form action={createTaskFormAction} className="grid gap-3 md:grid-cols-2">
               <input type="hidden" name="systemId" defaultValue={systemId} />
               <div className="space-y-1 md:col-span-2">

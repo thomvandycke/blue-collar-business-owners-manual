@@ -20,7 +20,7 @@ export function AcceptInviteForm({ token, email }: AcceptInviteFormProps) {
   return (
     <form action={formAction} className="space-y-4">
       <input type="hidden" name="token" value={token} />
-      <div className="rounded-md bg-slate-50 p-3 text-sm text-slate-700">
+      <div className="rounded-md bg-surface-2 p-3 text-sm text-text-secondary">
         Invited email: <strong>{email}</strong>
       </div>
       <div className="space-y-2">
@@ -31,7 +31,7 @@ export function AcceptInviteForm({ token, email }: AcceptInviteFormProps) {
         <Label htmlFor="password">Create Password</Label>
         <Input id="password" name="password" type="password" required />
       </div>
-      {state.error ? <p className="text-sm text-rose-700">{state.error}</p> : null}
+      {state.error ? <p className="text-sm text-danger">{state.error}</p> : null}
       <SubmitButton type="submit" className="w-full">
         Accept Invite
       </SubmitButton>

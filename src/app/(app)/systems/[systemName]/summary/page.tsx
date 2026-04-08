@@ -13,8 +13,8 @@ import { formatDate } from "@/lib/utils";
 function SummaryBlock({ title, content }: { title: string; content?: string | null }) {
   return (
     <div className="space-y-1">
-      <h3 className="text-sm font-semibold text-slate-700">{title}</h3>
-      <p className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 whitespace-pre-wrap">
+      <h3 className="text-sm font-semibold text-text-secondary">{title}</h3>
+      <p className="rounded-md border border-border-subtle bg-surface-2 p-3 text-sm text-text-secondary whitespace-pre-wrap">
         {content?.trim() || "Not filled yet."}
       </p>
     </div>
@@ -40,9 +40,9 @@ export default async function SystemSummaryPage({
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-wide text-slate-500">One-Page Summary</p>
-          <h1 className="text-2xl font-semibold text-slate-900">{definition.label}</h1>
-          <p className="text-sm text-slate-600">Last updated {formatDate(system.updatedAt)}</p>
+          <p className="text-xs uppercase tracking-wide text-text-muted">One-Page Summary</p>
+          <h1 className="text-2xl font-semibold text-text-primary">{definition.label}</h1>
+          <p className="text-sm text-text-secondary">Last updated {formatDate(system.updatedAt)}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" asChild>
@@ -103,15 +103,15 @@ export default async function SystemSummaryPage({
         </CardHeader>
         <CardContent className="space-y-2">
           {activeKpis.length === 0 ? (
-            <p className="text-sm text-slate-500">No active KPIs configured.</p>
+            <p className="text-sm text-text-muted">No active KPIs configured.</p>
           ) : (
             activeKpis.map((kpi) => (
-              <div key={kpi.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-slate-200 p-3 text-sm">
+              <div key={kpi.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border-subtle p-3 text-sm">
                 <div>
-                  <p className="font-medium text-slate-900">{kpi.name}</p>
-                  <p className="text-slate-600">{kpi.type.toLowerCase()} • {kpi.updateFrequency?.toLowerCase() || "no cadence"}</p>
+                  <p className="font-medium text-text-primary">{kpi.name}</p>
+                  <p className="text-text-secondary">{kpi.type.toLowerCase()} • {kpi.updateFrequency?.toLowerCase() || "no cadence"}</p>
                 </div>
-                <div className="text-slate-700">
+                <div className="text-text-secondary">
                   {kpi.currentValue?.toString() || "-"} / {kpi.targetValue?.toString() || "-"} {kpi.unit || ""}
                 </div>
               </div>
@@ -127,7 +127,7 @@ export default async function SystemSummaryPage({
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             {activeGoals.length === 0 ? (
-              <p className="text-slate-500">No active annual goals.</p>
+              <p className="text-text-muted">No active annual goals.</p>
             ) : (
               activeGoals.map((goal) => <p key={goal.id}>• {goal.title}</p>)
             )}
@@ -140,7 +140,7 @@ export default async function SystemSummaryPage({
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             {activeMilestones.length === 0 ? (
-              <p className="text-slate-500">No active milestones.</p>
+              <p className="text-text-muted">No active milestones.</p>
             ) : (
               activeMilestones.map((milestone) => <p key={milestone.id}>• {milestone.title}</p>)
             )}
@@ -153,7 +153,7 @@ export default async function SystemSummaryPage({
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             {activeTasks.length === 0 ? (
-              <p className="text-slate-500">No active tasks.</p>
+              <p className="text-text-muted">No active tasks.</p>
             ) : (
               activeTasks.map((task) => (
                 <div key={task.id} className="flex items-center justify-between gap-2">

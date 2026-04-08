@@ -21,13 +21,13 @@ export function SystemHeader({ systemName, owner, updatedAt, isEditMode, canEdit
   const systemSlug = definition?.slug ?? "";
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm md:flex-row md:items-start md:justify-between">
+    <div className="flex flex-col gap-4 rounded-xl border border-border-subtle bg-surface-1 p-5 shadow-sm md:flex-row md:items-start md:justify-between">
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-2xl font-semibold text-slate-900">{definition?.label ?? systemName}</h1>
+          <h1 className="text-2xl font-semibold text-text-primary">{definition?.label ?? systemName}</h1>
           <Badge tone={isEditMode ? "warning" : "muted"}>{isEditMode ? "Edit Mode" : "View Mode"}</Badge>
         </div>
-        <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600">
+        <div className="flex flex-wrap items-center gap-4 text-sm text-text-secondary">
           <UserAvatarChip name={owner?.displayName} imageUrl={owner?.profileImageUrl} />
           <span>Last updated: {formatDate(updatedAt)}</span>
         </div>
@@ -36,11 +36,12 @@ export function SystemHeader({ systemName, owner, updatedAt, isEditMode, canEdit
         <Button variant="outline" asChild>
           <Link href={`/systems/${systemSlug}/summary`}>Summary</Link>
         </Button>
+        <Button variant={isEditMode ? "ghost" : "secondary"} asChild>
+          <Link href={`/systems/${systemSlug}`}>View</Link>
+        </Button>
         {canEdit ? (
-          <Button variant={isEditMode ? "secondary" : "default"} asChild>
-            <Link href={isEditMode ? `/systems/${systemSlug}` : `/systems/${systemSlug}?mode=edit`}>
-              {isEditMode ? "Switch to View" : "Switch to Edit"}
-            </Link>
+          <Button variant={isEditMode ? "default" : "outline"} asChild>
+            <Link href={`/systems/${systemSlug}?mode=edit`}>Edit</Link>
           </Button>
         ) : null}
       </div>

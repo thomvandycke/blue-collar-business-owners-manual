@@ -17,7 +17,7 @@ type EditableSectionCardProps = {
 
 export function EditableSectionCard({ title, fields, isEditMode }: EditableSectionCardProps) {
   return (
-    <Card>
+    <Card className={isEditMode ? "border-accent-primary/40 bg-[rgba(255,106,0,0.05)]" : undefined}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
@@ -25,11 +25,11 @@ export function EditableSectionCard({ title, fields, isEditMode }: EditableSecti
         {fields.map((field) => (
           <div key={field.name} className="space-y-2">
             <Label htmlFor={field.name}>{field.label}</Label>
-            <p className="text-xs text-slate-500">{field.helper}</p>
+            <p className="text-xs text-text-muted">{field.helper}</p>
             {isEditMode ? (
               <Textarea id={field.name} name={field.name} defaultValue={field.value ?? ""} rows={4} />
             ) : (
-              <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 whitespace-pre-wrap">
+              <div className="rounded-md border border-border-subtle bg-surface-2 p-3 text-sm text-text-secondary whitespace-pre-wrap">
                 {field.value?.trim() ? field.value : "No content yet."}
               </div>
             )}

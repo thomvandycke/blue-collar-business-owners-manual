@@ -44,12 +44,12 @@ export function AnnualGoalList({ systemId, goals, users, isEditMode, canEdit }: 
       </CardHeader>
       <CardContent className="space-y-4">
         {goals.length === 0 ? (
-          <p className="rounded-md border border-dashed border-slate-300 p-3 text-sm text-slate-500">
+          <p className="rounded-md border border-dashed border-border-subtle p-3 text-sm text-text-muted">
             No annual goals yet.
           </p>
         ) : (
           goals.map((goal) => (
-            <div key={goal.id} className="rounded-lg border border-slate-200 p-4">
+            <div key={goal.id} className="rounded-lg border border-border-subtle p-4">
               {isEditMode && canEdit ? (
                 <form action={updateAnnualGoalFormAction} className="space-y-3">
                   <input type="hidden" name="id" defaultValue={goal.id} />
@@ -116,14 +116,14 @@ export function AnnualGoalList({ systemId, goals, users, isEditMode, canEdit }: 
               ) : (
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h4 className="font-medium text-slate-900">{goal.title}</h4>
+                    <h4 className="font-medium text-text-primary">{goal.title}</h4>
                     <div className="flex gap-2">
                       <ItemStatusBadge status={goal.status} />
                       <PriorityBadge priority={goal.priority} />
                     </div>
                   </div>
-                  <p className="text-sm text-slate-600">{goal.description || "No description"}</p>
-                  <div className="grid gap-2 text-sm text-slate-600 md:grid-cols-2">
+                  <p className="text-sm text-text-secondary">{goal.description || "No description"}</p>
+                  <div className="grid gap-2 text-sm text-text-secondary md:grid-cols-2">
                     <span>Due: {formatDate(goal.dueDate)}</span>
                     <span>Notes: {goal.notes || "-"}</span>
                   </div>
@@ -134,7 +134,7 @@ export function AnnualGoalList({ systemId, goals, users, isEditMode, canEdit }: 
                 <form action={deleteAnnualGoalAction} className="mt-3">
                   <input type="hidden" name="id" defaultValue={goal.id} />
                   <input type="hidden" name="systemId" defaultValue={systemId} />
-                  <Button type="submit" size="sm" variant="ghost" className="text-rose-700 hover:bg-rose-50">
+                  <Button type="submit" size="sm" variant="ghost" className="text-danger hover:bg-[rgba(235,87,87,0.2)]">
                     Delete Goal
                   </Button>
                 </form>
@@ -144,8 +144,8 @@ export function AnnualGoalList({ systemId, goals, users, isEditMode, canEdit }: 
         )}
 
         {isEditMode && canEdit ? (
-          <div className="rounded-lg border border-dashed border-slate-300 p-4">
-            <h4 className="mb-3 text-sm font-semibold text-slate-800">Add Annual Goal</h4>
+          <div className="rounded-lg border border-dashed border-border-subtle p-4">
+            <h4 className="mb-3 text-sm font-semibold text-text-primary">Add Annual Goal</h4>
             <form action={createAnnualGoalFormAction} className="grid gap-3 md:grid-cols-2">
               <input type="hidden" name="systemId" defaultValue={systemId} />
               <div className="space-y-1 md:col-span-2">

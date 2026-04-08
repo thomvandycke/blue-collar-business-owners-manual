@@ -26,30 +26,30 @@ export function SystemHealthCard({
   const system = getSystemByName(systemName);
 
   return (
-    <Card className="border-slate-200">
+    <Card className="border-border-subtle">
       <CardHeader className="flex-row items-center justify-between">
         <div>
-          <h3 className="text-base font-semibold text-slate-900">{system?.label ?? systemName}</h3>
-          <p className="text-sm text-slate-500">Owner: {ownerName || "Unassigned"}</p>
+          <h3 className="text-base font-semibold text-text-primary">{system?.label ?? systemName}</h3>
+          <p className="text-sm text-text-muted">Owner: {ownerName || "Unassigned"}</p>
         </div>
         <Badge tone={completion >= 75 ? "success" : completion >= 40 ? "warning" : "muted"}>
           {completion}% complete
         </Badge>
       </CardHeader>
-      <CardContent className="space-y-2 text-sm text-slate-600">
+      <CardContent className="space-y-2 text-sm text-text-secondary">
         <div className="flex items-center justify-between">
           <span>Active KPIs</span>
-          <span className="font-medium text-slate-900">{kpiCount}</span>
+          <span className="font-medium text-text-primary">{kpiCount}</span>
         </div>
         <div className="flex items-center justify-between">
           <span>Open Tasks</span>
-          <span className="font-medium text-slate-900">{openTasks}</span>
+          <span className="font-medium text-text-primary">{openTasks}</span>
         </div>
         <div className="flex items-center justify-between">
           <span>Overdue</span>
-          <span className="font-medium text-rose-700">{overdueTasks}</span>
+          <span className="font-medium text-danger">{overdueTasks}</span>
         </div>
-        <Link href={`/systems/${system?.slug}`} className="inline-block pt-1 text-[#1f4f46] hover:underline">
+        <Link href={`/systems/${system?.slug}`} className="inline-block pt-1 text-accent-primary hover:underline">
           Open system
         </Link>
       </CardContent>

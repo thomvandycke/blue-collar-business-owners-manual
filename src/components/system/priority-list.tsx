@@ -44,12 +44,12 @@ export function PriorityList({ systemId, items, users, isEditMode, canEdit }: Pr
       </CardHeader>
       <CardContent className="space-y-4">
         {items.length === 0 ? (
-          <p className="rounded-md border border-dashed border-slate-300 p-3 text-sm text-slate-500">
+          <p className="rounded-md border border-dashed border-border-subtle p-3 text-sm text-text-muted">
             No priority items yet.
           </p>
         ) : (
           items.map((item) => (
-            <div key={item.id} className="rounded-lg border border-slate-200 p-4">
+            <div key={item.id} className="rounded-lg border border-border-subtle p-4">
               {isEditMode && canEdit ? (
                 <form action={updatePriorityFormAction} className="space-y-3">
                   <input type="hidden" name="id" defaultValue={item.id} />
@@ -114,14 +114,14 @@ export function PriorityList({ systemId, items, users, isEditMode, canEdit }: Pr
               ) : (
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h4 className="font-medium text-slate-900">{item.title}</h4>
+                    <h4 className="font-medium text-text-primary">{item.title}</h4>
                     <div className="flex gap-2">
                       <ItemStatusBadge status={item.status} />
                       <PriorityBadge priority={item.priority} />
                     </div>
                   </div>
-                  <p className="text-sm text-slate-600">{item.description || "No description"}</p>
-                  <div className="grid gap-2 text-sm text-slate-600 md:grid-cols-2">
+                  <p className="text-sm text-text-secondary">{item.description || "No description"}</p>
+                  <div className="grid gap-2 text-sm text-text-secondary md:grid-cols-2">
                     <span>Due: {formatDate(item.dueDate)}</span>
                     <span>Notes: {item.notes || "-"}</span>
                   </div>
@@ -132,7 +132,7 @@ export function PriorityList({ systemId, items, users, isEditMode, canEdit }: Pr
                 <form action={deletePriorityAction} className="mt-3">
                   <input type="hidden" name="id" defaultValue={item.id} />
                   <input type="hidden" name="systemId" defaultValue={systemId} />
-                  <Button type="submit" size="sm" variant="ghost" className="text-rose-700 hover:bg-rose-50">
+                  <Button type="submit" size="sm" variant="ghost" className="text-danger hover:bg-[rgba(235,87,87,0.2)]">
                     Delete Priority
                   </Button>
                 </form>
@@ -142,8 +142,8 @@ export function PriorityList({ systemId, items, users, isEditMode, canEdit }: Pr
         )}
 
         {isEditMode && canEdit ? (
-          <div className="rounded-lg border border-dashed border-slate-300 p-4">
-            <h4 className="mb-3 text-sm font-semibold text-slate-800">Add Priority</h4>
+          <div className="rounded-lg border border-dashed border-border-subtle p-4">
+            <h4 className="mb-3 text-sm font-semibold text-text-primary">Add Priority</h4>
             <form action={createPriorityFormAction} className="grid gap-3 md:grid-cols-2">
               <input type="hidden" name="systemId" defaultValue={systemId} />
               <div className="space-y-1 md:col-span-2">

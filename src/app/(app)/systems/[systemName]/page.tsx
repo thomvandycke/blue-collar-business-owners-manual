@@ -157,7 +157,7 @@ export default async function SystemPage({
             <CardHeader>
               <CardTitle>Indicators Guidance</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm text-slate-700">
+            <CardContent className="space-y-3 text-sm text-text-secondary">
               <p>Use the KPI section below to track up to 5 KPIs for this system.</p>
               <ul className="list-disc space-y-1 pl-5">
                 <li>Include leading and lagging indicators.</li>
@@ -165,7 +165,7 @@ export default async function SystemPage({
                 <li>Keep units and targets clear for easy weekly review.</li>
               </ul>
               {isEditMode ? (
-                <label className="flex items-center gap-2 rounded-md bg-slate-50 p-2">
+                <label className="flex items-center gap-2 rounded-md bg-surface-2 p-2">
                   <input type="checkbox" name="isCompleted" defaultChecked={system.isCompleted} />
                   Mark this system as completed
                 </label>

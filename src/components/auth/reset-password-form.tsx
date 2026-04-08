@@ -23,8 +23,8 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         <Label htmlFor="password">New Password</Label>
         <Input id="password" name="password" type="password" required />
       </div>
-      {state.error ? <p className="text-sm text-rose-700">{state.error}</p> : null}
-      {state.success ? <p className="text-sm text-emerald-700">{state.success}</p> : null}
+      {state.error ? <p className="text-sm text-danger">{state.error}</p> : null}
+      {state.success ? <p className="text-sm text-success">{state.success}</p> : null}
       <SubmitButton type="submit" className="w-full">
         Reset Password
       </SubmitButton>

@@ -35,14 +35,14 @@ export function ProfileSettingsForm({ defaultDisplayName, defaultProfileImage }:
           defaultValue={defaultProfileImage}
         />
 
-        {profileState.error ? <p className="text-sm text-rose-700">{profileState.error}</p> : null}
-        {profileState.success ? <p className="text-sm text-emerald-700">{profileState.success}</p> : null}
+        {profileState.error ? <p className="text-sm text-danger">{profileState.error}</p> : null}
+        {profileState.success ? <p className="text-sm text-success">{profileState.success}</p> : null}
 
         <SubmitButton type="submit">Save Profile</SubmitButton>
       </form>
 
-      <form action={passwordAction} className="space-y-4 rounded-lg border border-slate-200 p-4">
-        <h3 className="text-base font-semibold text-slate-900">Change Password</h3>
+      <form action={passwordAction} className="space-y-4 rounded-lg border border-border-subtle p-4">
+        <h3 className="text-base font-semibold text-text-primary">Change Password</h3>
         <div className="space-y-2">
           <Label htmlFor="currentPassword">Current Password</Label>
           <Input id="currentPassword" name="currentPassword" type="password" required />
@@ -50,11 +50,11 @@ export function ProfileSettingsForm({ defaultDisplayName, defaultProfileImage }:
         <div className="space-y-2">
           <Label htmlFor="newPassword">New Password</Label>
           <Input id="newPassword" name="newPassword" type="password" required />
-          <p className="text-xs text-slate-500">Use at least 8 characters with uppercase, lowercase, and a number.</p>
+          <p className="text-xs text-text-muted">Use at least 8 characters with uppercase, lowercase, and a number.</p>
         </div>
 
-        {passwordState.error ? <p className="text-sm text-rose-700">{passwordState.error}</p> : null}
-        {passwordState.success ? <p className="text-sm text-emerald-700">{passwordState.success}</p> : null}
+        {passwordState.error ? <p className="text-sm text-danger">{passwordState.error}</p> : null}
+        {passwordState.success ? <p className="text-sm text-success">{passwordState.success}</p> : null}
 
         <SubmitButton type="submit">Update Password</SubmitButton>
       </form>
