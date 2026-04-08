@@ -42,16 +42,22 @@ export function LoginForm() {
           functionality, security, and support. We do not sell your personal information. Access is role-based and
           activity may be logged for accountability and audit history.
         </p>
-        <p className="mt-2">
-          By logging in, you agree to our{" "}
-          <Link href="/terms" className="text-accent-primary hover:underline">
-            Terms &amp; Conditions
-          </Link>{" "}
-          and acknowledge our{" "}
-          <Link href="/privacy" className="text-accent-primary hover:underline">
-            Privacy Statement
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Link
+            href="/terms"
+            className="inline-flex rounded-md border border-border-subtle bg-bg-primary px-2 py-1 font-semibold text-accent-primary underline underline-offset-2 hover:bg-surface-1"
+          >
+            Read Terms &amp; Conditions
           </Link>
-          .
+          <Link
+            href="/privacy"
+            className="inline-flex rounded-md border border-border-subtle bg-bg-primary px-2 py-1 font-semibold text-accent-primary underline underline-offset-2 hover:bg-surface-1"
+          >
+            Read Privacy Statement
+          </Link>
+        </div>
+        <p className="mt-2">
+          By logging in, you agree to the Terms &amp; Conditions and acknowledge the Privacy Statement.
         </p>
       </div>
     </form>
