@@ -81,9 +81,15 @@ Required values:
 
 - `DATABASE_URL` - PostgreSQL connection string
 - `NEXT_PUBLIC_APP_URL` - app base URL (`http://localhost:3000` in local dev)
-- `RESEND_API_KEY` - API key for transactional outbound email
-- `RESEND_FROM_EMAIL` - sender identity for outbound email
+- `GOOGLE_EMAIL_USER` - Google account email used for app notifications
+- `GOOGLE_EMAIL_APP_PASSWORD` - Google App Password for SMTP (recommended)
+- `GOOGLE_EMAIL_FROM` - optional sender identity, e.g. `Blue Collar Manual <ops@unmatchedgrowth.com>`
 - `NEW_USER_NOTIFY_EMAILS` - comma-separated inboxes for new-user registration notifications (defaults to Thom + Brad)
+
+Google setup note:
+- Enable 2-Step Verification on the Google account.
+- Create an App Password in Google Security settings.
+- Use that App Password for `GOOGLE_EMAIL_APP_PASSWORD` (not your main Google password).
 
 ## Local Setup
 
@@ -169,8 +175,9 @@ Authenticated:
 3. Add environment variables in Vercel:
    - `DATABASE_URL`
    - `NEXT_PUBLIC_APP_URL` (set to your Vercel URL/domain)
-   - `RESEND_API_KEY`
-   - `RESEND_FROM_EMAIL`
+   - `GOOGLE_EMAIL_USER`
+   - `GOOGLE_EMAIL_APP_PASSWORD`
+   - `GOOGLE_EMAIL_FROM` (optional)
    - `NEW_USER_NOTIFY_EMAILS`
 4. Ensure your Postgres instance is reachable from Vercel.
 5. Run migrations against production DB before or during first deploy.

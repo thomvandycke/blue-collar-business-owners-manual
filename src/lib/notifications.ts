@@ -1,8 +1,12 @@
 import "server-only";
 
 import { UserRole } from "@prisma/client";
+import nodemailer from "nodemailer";
 
 const DEFAULT_NOTIFICATION_RECIPIENTS = ["thom@unmatchedgrowth.com", "brad@unmatchedgrowth.com"];
+const DEFAULT_EMAIL_FROM = "Blue Collar Manual";
+
+let transporterSingleton: nodemailer.Transporter | null = null;
 
 function parseRecipientList(rawValue: string | undefined) {
   if (!rawValue) return [];
@@ -27,6 +31,63 @@ function getNewUserNotificationRecipients() {
   return DEFAULT_NOTIFICATION_RECIPIENTS;
 }
 
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function getGoogleMailConfig() {
+  const user = process.env.GOOGLE_EMAIL_USER ?? process.env.GMAIL_USER;
+  const appPassword = process.env.GOOGLE_EMAIL_APP_PASSWORD ?? process.env.GMAIL_APP_PASSWORD;
+
+  if (!user || !appPassword) {
+    throw new Error(
+      "Google email is not configured. Set GOOGLE_EMAIL_USER and GOOGLE_EMAIL_APP_PASSWORD in Vercel.",
+    );
+  }
+
+  const from = process.env.GOOGLE_EMAIL_FROM ?? `${DEFAULT_EMAIL_FROM} <${user}>`;
+
+  return { user, appPassword, from };
+}
+
+function getTransporter() {
+  if (transporterSingleton) return transporterSingleton;
+
+  const config = getGoogleMailConfig();
+  transporterSingleton = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: config.user,
+      pass: config.appPassword,
+    },
+  });
+
+  return transporterSingleton;
+}
+
+async function sendEmail(params: {
+  to: string[];
+  subject: string;
+  html: string;
+  replyTo?: string;
+}) {
+  const { from } = getGoogleMailConfig();
+  const transporter = getTransporter();
+
+  await transporter.sendMail({
+    from,
+    to: params.to.join(", "),
+    subject: params.subject,
+    html: params.html,
+    replyTo: params.replyTo,
+  });
+}
+
 type NewUserNotificationInput = {
   accountName: string;
   email: string;
@@ -36,13 +97,7 @@ type NewUserNotificationInput = {
 };
 
 export async function sendNewUserNotification(input: NewUserNotificationInput) {
-  const apiKey = process.env.RESEND_API_KEY;
   const recipients = Array.from(new Set(getNewUserNotificationRecipients()));
-  const fromEmail = process.env.RESEND_FROM_EMAIL ?? "Blue Collar Manual <onboarding@resend.dev>";
-
-  if (!apiKey) {
-    throw new Error("RESEND_API_KEY is not configured.");
-  }
 
   const sourceLabel =
     input.source === "signup"
@@ -57,34 +112,21 @@ export async function sendNewUserNotification(input: NewUserNotificationInput) {
       <h2 style="margin: 0 0 12px;">New User Registration</h2>
       <p style="margin: 0 0 12px;">A new user has been added to Blue Collar Business Owner's Manual.</p>
       <ul style="margin: 0 0 12px; padding-left: 18px;">
-        <li><strong>Account:</strong> ${input.accountName}</li>
-        <li><strong>Name:</strong> ${input.displayName}</li>
-        <li><strong>Email:</strong> ${input.email}</li>
-        <li><strong>Role:</strong> ${input.role}</li>
-        <li><strong>Source:</strong> ${sourceLabel}</li>
+        <li><strong>Account:</strong> ${escapeHtml(input.accountName)}</li>
+        <li><strong>Name:</strong> ${escapeHtml(input.displayName)}</li>
+        <li><strong>Email:</strong> ${escapeHtml(input.email)}</li>
+        <li><strong>Role:</strong> ${escapeHtml(input.role)}</li>
+        <li><strong>Source:</strong> ${escapeHtml(sourceLabel)}</li>
       </ul>
       <p style="margin: 0;">Timestamp: ${new Date().toISOString()}</p>
     </div>
   `;
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: fromEmail,
-      to: recipients,
-      subject,
-      html,
-    }),
+  await sendEmail({
+    to: recipients,
+    subject,
+    html,
   });
-
-  if (!response.ok) {
-    const body = await response.text();
-    throw new Error(`Resend email failed (${response.status}): ${body}`);
-  }
 }
 
 type SupportRequestNotificationInput = {
@@ -97,47 +139,27 @@ type SupportRequestNotificationInput = {
 };
 
 export async function sendSupportRequestNotification(input: SupportRequestNotificationInput) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const fromEmail = process.env.RESEND_FROM_EMAIL ?? "Blue Collar Manual <onboarding@resend.dev>";
-
-  if (!apiKey) {
-    throw new Error("RESEND_API_KEY is not configured.");
-  }
-
   const recipients = ["thom@unmatchedgrowth.com", "brad@unmatchedgrowth.com"];
   const subject = `[Support:${input.category}] ${input.topic}`;
   const html = `
     <div style="font-family: Inter, Arial, sans-serif; line-height: 1.5; color: #111827;">
       <h2 style="margin: 0 0 12px;">In-App Support Request</h2>
       <ul style="margin: 0 0 12px; padding-left: 18px;">
-        <li><strong>Account:</strong> ${input.accountName}</li>
-        <li><strong>Requester:</strong> ${input.requesterName}</li>
-        <li><strong>Requester Email:</strong> ${input.requesterEmail}</li>
-        <li><strong>Category:</strong> ${input.category}</li>
-        <li><strong>Topic:</strong> ${input.topic}</li>
+        <li><strong>Account:</strong> ${escapeHtml(input.accountName)}</li>
+        <li><strong>Requester:</strong> ${escapeHtml(input.requesterName)}</li>
+        <li><strong>Requester Email:</strong> ${escapeHtml(input.requesterEmail)}</li>
+        <li><strong>Category:</strong> ${escapeHtml(input.category)}</li>
+        <li><strong>Topic:</strong> ${escapeHtml(input.topic)}</li>
       </ul>
-      <p style="white-space: pre-wrap; margin: 0 0 12px;"><strong>Message:</strong><br />${input.message}</p>
+      <p style="white-space: pre-wrap; margin: 0 0 12px;"><strong>Message:</strong><br />${escapeHtml(input.message)}</p>
       <p style="margin: 0;">Timestamp: ${new Date().toISOString()}</p>
     </div>
   `;
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: fromEmail,
-      to: recipients,
-      subject,
-      html,
-      reply_to: input.requesterEmail,
-    }),
+  await sendEmail({
+    to: recipients,
+    subject,
+    html,
+    replyTo: input.requesterEmail,
   });
-
-  if (!response.ok) {
-    const body = await response.text();
-    throw new Error(`Support email failed (${response.status}): ${body}`);
-  }
 }
