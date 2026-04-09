@@ -83,7 +83,7 @@ Required values:
 - `NEXT_PUBLIC_APP_URL` - app base URL (`http://localhost:3000` in local dev)
 - `RESEND_API_KEY` - API key for transactional outbound email
 - `RESEND_FROM_EMAIL` - sender identity for outbound email
-- `NEW_USER_NOTIFY_EMAIL` - inbox for new-user registration notifications
+- `NEW_USER_NOTIFY_EMAILS` - comma-separated inboxes for new-user registration notifications (defaults to Thom + Brad)
 
 ## Local Setup
 
@@ -171,7 +171,7 @@ Authenticated:
    - `NEXT_PUBLIC_APP_URL` (set to your Vercel URL/domain)
    - `RESEND_API_KEY`
    - `RESEND_FROM_EMAIL`
-   - `NEW_USER_NOTIFY_EMAIL`
+   - `NEW_USER_NOTIFY_EMAILS`
 4. Ensure your Postgres instance is reachable from Vercel.
 5. Run migrations against production DB before or during first deploy.
 

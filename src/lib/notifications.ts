@@ -2,6 +2,31 @@ import "server-only";
 
 import { UserRole } from "@prisma/client";
 
+const DEFAULT_NOTIFICATION_RECIPIENTS = ["thom@unmatchedgrowth.com", "brad@unmatchedgrowth.com"];
+
+function parseRecipientList(rawValue: string | undefined) {
+  if (!rawValue) return [];
+
+  return rawValue
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function getNewUserNotificationRecipients() {
+  const recipientsFromList = parseRecipientList(process.env.NEW_USER_NOTIFY_EMAILS);
+  if (recipientsFromList.length > 0) {
+    return recipientsFromList;
+  }
+
+  const recipientsFromLegacyValue = parseRecipientList(process.env.NEW_USER_NOTIFY_EMAIL);
+  if (recipientsFromLegacyValue.length > 0) {
+    return recipientsFromLegacyValue;
+  }
+
+  return DEFAULT_NOTIFICATION_RECIPIENTS;
+}
+
 type NewUserNotificationInput = {
   accountName: string;
   email: string;
@@ -12,12 +37,11 @@ type NewUserNotificationInput = {
 
 export async function sendNewUserNotification(input: NewUserNotificationInput) {
   const apiKey = process.env.RESEND_API_KEY;
-  const toEmail = process.env.NEW_USER_NOTIFY_EMAIL ?? "thom@unmatchedgrowth.com";
+  const recipients = Array.from(new Set(getNewUserNotificationRecipients()));
   const fromEmail = process.env.RESEND_FROM_EMAIL ?? "Blue Collar Manual <onboarding@resend.dev>";
 
   if (!apiKey) {
-    console.warn("RESEND_API_KEY is not configured. Skipping new user notification email.");
-    return;
+    throw new Error("RESEND_API_KEY is not configured.");
   }
 
   const sourceLabel =
@@ -51,7 +75,7 @@ export async function sendNewUserNotification(input: NewUserNotificationInput) {
     },
     body: JSON.stringify({
       from: fromEmail,
-      to: [toEmail],
+      to: recipients,
       subject,
       html,
     }),
