@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 
 import { resetPasswordAction, type ActionState } from "@/actions/auth-actions";
@@ -28,6 +29,11 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       <SubmitButton type="submit" className="w-full">
         Reset Password
       </SubmitButton>
+      <p className="text-center text-sm text-text-secondary">
+        <Link href="/login" className="text-accent-primary hover:underline">
+          Back to login
+        </Link>
+      </p>
     </form>
   );
 }

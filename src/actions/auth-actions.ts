@@ -7,7 +7,7 @@ import { randomBytes } from "node:crypto";
 
 import { logActivity } from "@/lib/activity";
 import { getAppUrl } from "@/lib/app-url";
-import { getFormString } from "@/lib/form-utils";
+import { getFormBoolean, getFormString } from "@/lib/form-utils";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { clearCurrentSession, createUserSession, requireUser } from "@/lib/auth/session";
 import { sendNewUserNotification, sendPasswordResetEmail } from "@/lib/notifications";
@@ -143,6 +143,7 @@ export async function signupAction(_: ActionState, formData: FormData): Promise<
 }
 
 export async function loginAction(_: ActionState, formData: FormData): Promise<ActionState> {
+  const rememberMe = getFormBoolean(formData, "rememberMe");
   const parsed = loginSchema.safeParse({
     email: getFormString(formData, "email").toLowerCase(),
     password: getFormString(formData, "password"),
@@ -173,7 +174,7 @@ export async function loginAction(_: ActionState, formData: FormData): Promise<A
     data: { lastLoginAt: new Date() },
   });
 
-  await createUserSession(user.id);
+  await createUserSession(user.id, { rememberMe });
   await logActivity({
     accountId: user.accountId,
     userId: user.id,
@@ -421,5 +422,5 @@ export async function resetPasswordAction(_: ActionState, formData: FormData): P
     await tx.session.deleteMany({ where: { userId: resetToken.userId } });
   });
 
-  return { success: "Password has been reset. You can now log in." };
+  redirect("/login?reset=success");
 }

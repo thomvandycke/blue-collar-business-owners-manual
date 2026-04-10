@@ -10,11 +10,16 @@ import { SubmitButton } from "@/components/ui/submit-button";
 
 const initialState: ActionState = {};
 
-export function LoginForm() {
+type LoginFormProps = {
+  resetNotice?: string;
+};
+
+export function LoginForm({ resetNotice }: LoginFormProps) {
   const [state, formAction] = useActionState(loginAction, initialState);
 
   return (
     <form action={formAction} className="space-y-4">
+      {resetNotice ? <p className="text-sm text-success">{resetNotice}</p> : null}
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input id="email" name="email" type="email" required />
@@ -23,6 +28,14 @@ export function LoginForm() {
         <Label htmlFor="password">Password</Label>
         <Input id="password" name="password" type="password" required />
       </div>
+      <label className="inline-flex items-center gap-2 text-sm text-text-secondary">
+        <input
+          type="checkbox"
+          name="rememberMe"
+          className="h-4 w-4 rounded border-border-subtle bg-surface-2 accent-accent-primary"
+        />
+        Remember me
+      </label>
       {state.error ? <p className="text-sm text-danger">{state.error}</p> : null}
       <SubmitButton type="submit" className="w-full">
         Log In

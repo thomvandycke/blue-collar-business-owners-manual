@@ -10,16 +10,20 @@ import { UserRole } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export const SESSION_COOKIE_NAME = "grit_session";
-const SESSION_DURATION_DAYS = 30;
+const STANDARD_SESSION_DURATION_DAYS = 7;
+const REMEMBER_ME_SESSION_DURATION_DAYS = 30;
 
 function hashToken(token: string) {
   return createHash("sha256").update(token).digest("hex");
 }
 
-export async function createUserSession(userId: string) {
+export async function createUserSession(userId: string, options?: { rememberMe?: boolean }) {
   const token = randomBytes(48).toString("hex");
   const tokenHash = hashToken(token);
-  const expiresAt = addDays(new Date(), SESSION_DURATION_DAYS);
+  const expiresAt = addDays(
+    new Date(),
+    options?.rememberMe ? REMEMBER_ME_SESSION_DURATION_DAYS : STANDARD_SESSION_DURATION_DAYS,
+  );
 
   await prisma.session.create({
     data: {
