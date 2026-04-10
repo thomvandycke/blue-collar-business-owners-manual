@@ -6,10 +6,11 @@ import { redirect } from "next/navigation";
 import { randomBytes } from "node:crypto";
 
 import { logActivity } from "@/lib/activity";
+import { getAppUrl } from "@/lib/app-url";
 import { getFormString } from "@/lib/form-utils";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { clearCurrentSession, createUserSession, requireUser } from "@/lib/auth/session";
-import { sendNewUserNotification } from "@/lib/notifications";
+import { sendNewUserNotification, sendPasswordResetEmail } from "@/lib/notifications";
 import { prisma } from "@/lib/prisma";
 import { SYSTEM_DEFINITIONS } from "@/lib/system-config";
 import {
@@ -343,8 +344,8 @@ export async function requestPasswordResetAction(
 
   const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
 
-  if (!user) {
-    return { success: "If that email exists, a reset link has been generated." };
+  if (!user || !user.isActive) {
+    return { success: "If that email exists, we've sent a password reset link." };
   }
 
   const token = randomBytes(24).toString("hex");
@@ -365,11 +366,23 @@ export async function requestPasswordResetAction(
     action: "reset_requested",
   });
 
-  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/reset-password/${token}`;
+  const resetUrl = getAppUrl(`/reset-password/${token}`);
 
+  try {
+    await sendPasswordResetEmail({
+      toEmail: user.email,
+      displayName: user.displayName,
+      resetUrl,
+    });
+  } catch (error) {
+    console.error("Failed to send password reset email", error);
+    return { error: "We could not send a reset email right now. Please try again in a moment." };
+  }
+
+  const shouldExposeResetUrl = process.env.NODE_ENV !== "production";
   return {
-    success: "Reset link generated. In production this should be emailed.",
-    resetUrl,
+    success: "If that email exists, we've sent a password reset link.",
+    resetUrl: shouldExposeResetUrl ? resetUrl : undefined,
   };
 }
 

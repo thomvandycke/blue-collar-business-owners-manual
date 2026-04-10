@@ -6,6 +6,7 @@ import { randomBytes } from "node:crypto";
 
 import type { ActionState } from "@/actions/auth-actions";
 import { logActivity } from "@/lib/activity";
+import { getAppUrl } from "@/lib/app-url";
 import { canAccessUserAdminArea } from "@/lib/admin-access";
 import { getFormString } from "@/lib/form-utils";
 import { hashPassword } from "@/lib/auth/password";
@@ -152,7 +153,7 @@ export async function inviteUserAction(_: ActionState, formData: FormData): Prom
   });
 
   if (existingInvite) {
-    const existingUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/accept-invite/${existingInvite.token}`;
+    const existingUrl = getAppUrl(`/accept-invite/${existingInvite.token}`);
     return {
       success: "Invite already exists. Re-share the existing link below.",
       resetUrl: existingUrl,
@@ -186,7 +187,7 @@ export async function inviteUserAction(_: ActionState, formData: FormData): Prom
 
   return {
     success: "Invite created. Share this secure link:",
-    resetUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/accept-invite/${token}`,
+    resetUrl: getAppUrl(`/accept-invite/${token}`),
   };
 }
 

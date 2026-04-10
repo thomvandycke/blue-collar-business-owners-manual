@@ -163,3 +163,43 @@ export async function sendSupportRequestNotification(input: SupportRequestNotifi
     replyTo: input.requesterEmail,
   });
 }
+
+type PasswordResetEmailInput = {
+  toEmail: string;
+  displayName: string;
+  resetUrl: string;
+};
+
+export async function sendPasswordResetEmail(input: PasswordResetEmailInput) {
+  const subject = "Reset your Blue Collar Business Owner's Manual password";
+  const html = `
+    <div style="font-family: Inter, Arial, sans-serif; line-height: 1.5; color: #111827;">
+      <h2 style="margin: 0 0 12px;">Reset your password</h2>
+      <p style="margin: 0 0 12px;">Hi ${escapeHtml(input.displayName)},</p>
+      <p style="margin: 0 0 12px;">
+        We received a request to reset your password. Use the secure link below to set a new password.
+      </p>
+      <p style="margin: 0 0 12px;">
+        <a
+          href="${escapeHtml(input.resetUrl)}"
+          style="display:inline-block;padding:10px 16px;background:#ff6a00;color:#ffffff;text-decoration:none;border-radius:8px;"
+        >
+          Reset Password
+        </a>
+      </p>
+      <p style="margin: 0 0 12px; color: #4b5563;">
+        If you did not request this, you can ignore this email. For security, reset links expire after 24 hours.
+      </p>
+      <p style="margin: 0; color: #6b7280; font-size: 12px;">
+        If the button does not work, copy and paste this URL into your browser:<br />
+        ${escapeHtml(input.resetUrl)}
+      </p>
+    </div>
+  `;
+
+  await sendEmail({
+    to: [input.toEmail],
+    subject,
+    html,
+  });
+}

@@ -11,6 +11,7 @@ const initialState: ActionState = {};
 
 export function ForgotPasswordForm() {
   const [state, formAction] = useActionState(requestPasswordResetAction, initialState);
+  const showDevResetLink = process.env.NODE_ENV !== "production";
 
   return (
     <form action={formAction} className="space-y-4">
@@ -20,9 +21,12 @@ export function ForgotPasswordForm() {
       </div>
       {state.error ? <p className="text-sm text-danger">{state.error}</p> : null}
       {state.success ? <p className="text-sm text-success">{state.success}</p> : null}
-      {state.resetUrl ? (
+      {showDevResetLink && state.resetUrl ? (
         <div className="rounded-md border border-border-subtle bg-surface-2 p-3 text-sm break-all">
-          Dev reset link: <a className="text-accent-primary underline" href={state.resetUrl}>{state.resetUrl}</a>
+          Development reset link:{" "}
+          <a className="text-accent-primary underline" href={state.resetUrl}>
+            {state.resetUrl}
+          </a>
         </div>
       ) : null}
       <SubmitButton type="submit" className="w-full">

@@ -82,7 +82,7 @@ Required values:
 - `DATABASE_URL` - PostgreSQL connection string
 - `NEXT_PUBLIC_APP_URL` - app base URL (`http://localhost:3000` in local dev)
 - `GOOGLE_EMAIL_USER` - Google account email used for app notifications
-- `GOOGLE_EMAIL_APP_PASSWORD` - Google App Password for SMTP (recommended)
+- `GOOGLE_EMAIL_APP_PASSWORD` - Google App Password for SMTP (used for notifications and password reset emails)
 - `GOOGLE_EMAIL_FROM` - optional sender identity, e.g. `Blue Collar Manual <ops@unmatchedgrowth.com>`
 - `NEW_USER_NOTIFY_EMAILS` - comma-separated inboxes for new-user registration notifications (defaults to Thom + Brad)
 
